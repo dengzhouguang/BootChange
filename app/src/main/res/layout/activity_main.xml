@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dzg.bootchange.MainActivity"
+    android:padding="3px">
+
+   <EditText
+       android:id="@+id/id_et"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="0"
+       android:textSize="20sp"
+       android:hint="输入步数"
+       android:textColor="@color/colorAccent" />
+    <TextView
+        android:padding="3dp"
+        android:id="@+id/id_tv"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="0"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/id_et"
+        android:textColor="@color/colorAccent" />
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="确定"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/id_tv"
+        android:onClick="onClick"/>
+
+</RelativeLayout>
