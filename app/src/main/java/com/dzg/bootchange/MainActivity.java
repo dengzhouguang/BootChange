@@ -4,19 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.dzg.bootchange.bean.StepBean;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,12 +18,8 @@ import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView mTextView;
-    private Button mButton;
-    private EditText mEditText;
     public static String PCKAGE_NAME="com.dzg.bootchange";
-    private boolean isRoot;
-
+    private int mStep=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,22 +27,9 @@ public class MainActivity extends AppCompatActivity {
         getBoot();
         editSP();
         save();
+        if (mStep>0)
+            Toast.makeText(this,"步数已增加"+mStep*2+"步",Toast.LENGTH_LONG).show();
         finish();
-    }
-
-    private void save() {
-        try {
-            File file=new File("/data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter_private.xml");
-            FileInputStream fis=new FileInputStream(file);
-            byte[] bs=new byte[8*1024*1024];
-            int len=-1;
-            len = fis.read(bs);
-            String sp=new String(bs,0,len,"utf-8").replace("\"","\\\"");
-            Exec(sp);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -63,66 +40,27 @@ public class MainActivity extends AppCompatActivity {
     public void getBoot(){
         Process process = null;
         DataOutputStream os = null;
-        DataInputStream is;
         File dir=new File("/data/data/com.dzg.bootchange/shared_prefs/");
         if (!dir.exists()){
             dir.mkdirs();
         }
         String cmd="chmod 777 " + PCKAGE_NAME;
-        String editString="cat /data/data/com.eg.android.AlipayGphone/shared_prefs/NewPedoMeter_private.xml";
+        String cmd2="cp /data/data/com.eg.android.AlipayGphone/shared_prefs/NewPedoMeter_private.xml /data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter_private.xml";
+        String cmd3="cp  /data/data/com.eg.android.AlipayGphone/shared_prefs/NewPedoMeter.xml /data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter.xml";
+        String cmd4="chmod 666 /data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter_private.xml";
+        String cmd5="chmod 666 /data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter.xml";
         try {
             process = Runtime.getRuntime().exec("su"); //切换到root帐号
             os = new DataOutputStream(process.getOutputStream());
-            is=new DataInputStream(process.getInputStream());
             os.writeBytes(cmd + "\n");
-            os.writeBytes(editString+"\n");
+            os.writeBytes(cmd2+"\n");
+            os.writeBytes(cmd3+"\n");
+            os.writeBytes(cmd4+"\n");
+            os.writeBytes(cmd5+"\n");
             os.writeBytes("exit\n");
             os.flush();
-            byte[] bs=new byte[8*1024*1024];
-            int len=-1;
-            len=is.read(bs);
-            File file=new File("/data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter_private.xml");
-            FileWriter writer=new FileWriter(file);
-            if(len>0){
-            writer.write(new String(bs,0,len-1,"utf-8"));}
-            writer.flush();
-            writer.close();
             process.waitFor();
             os.close();
-            is.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            if (os!=null)
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            process.destroy();
-        }
-        String cmd2="chmod 777 " + PCKAGE_NAME;
-        String editString2="cat /data/data/com.eg.android.AlipayGphone/shared_prefs/NewPedoMeter.xml";
-        try {
-            process = Runtime.getRuntime().exec("su"); //切换到root帐号
-            os = new DataOutputStream(process.getOutputStream());
-            is=new DataInputStream(process.getInputStream());
-            os.writeBytes(cmd2 + "\n");
-            os.writeBytes(editString2+"\n");
-            os.writeBytes("exit\n");
-            os.flush();
-            byte[] bs=new byte[8*1024*1024];
-            int len=-1;
-            len=is.read(bs);
-            File file=new File("/data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter.xml");
-            FileWriter writer=new FileWriter(file);
-            if(len>0){
-                writer.write(new String(bs,0,len-1,"utf-8"));}
-            writer.flush();
-            writer.close();
-            process.waitFor();
-            os.close();
-            is.close();
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
@@ -135,16 +73,18 @@ public class MainActivity extends AppCompatActivity {
             process.destroy();
         }
     }
-    public void Exec(String string){
+    public void save(){
         Process process = null;
         DataOutputStream os = null;
         String cmd="chmod 777 " + PCKAGE_NAME;
-        String editString="echo \""+string+"\">"+"/data/data/com.eg.android.AlipayGphone/shared_prefs/NewPedoMeter_private.xml";
+        String cmd2="cp /data/data/com.dzg.bootchange/shared_prefs/NewPedoMeter_private.xml /data/data/com.eg.android.AlipayGphone/shared_prefs/NewPedoMeter_private.xml";
+        String cmd3="chmod 666 /data/data/com.eg.android.AlipayGphone/shared_prefs/NewPedoMeter_private.xml";
         try {
             process = Runtime.getRuntime().exec("su"); //切换到root帐号
             os = new DataOutputStream(process.getOutputStream());
             os.writeBytes(cmd + "\n");
-            os.writeBytes(editString+"\n");
+            os.writeBytes(cmd2+"\n");
+            os.writeBytes(cmd3+"\n");
             os.writeBytes("exit\n");
             os.flush();
             process.waitFor();
@@ -167,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
             firstBean.setTime(lastBean.getTime());
         }
         long timespan=new Date().getTime()-firstBean.getTime();
-        int step = (int) (timespan/1000);
-        int span=30;
+        mStep = (int) (timespan/1000);
+        int span=100;
         List<StepBean> myList=new ArrayList<>();
         Random random=new Random();
-        for (int i=0;i<step;i++){
+        for (int i=0;i<mStep;i++){
             StepBean stepBean=new StepBean();
             i=i+random.nextInt(span);
             stepBean.setSteps(firstBean.getSteps()+i*2);
@@ -181,6 +121,5 @@ public class MainActivity extends AppCompatActivity {
         }
         String jsonString=JSON.toJSONString(myList);
         sp.edit().putString("stepRecord",jsonString).commit();
-        Log.e("getEBoot",jsonString);
     }
 }
